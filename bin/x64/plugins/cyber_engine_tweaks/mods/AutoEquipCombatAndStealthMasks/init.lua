@@ -34,9 +34,11 @@ end
 local function onStateChanged(active)
 	if active then
 		if not state.wasEquipped and not Util.isInVehicle() then
+			-- print("Equipping...")
 			equipItems()
 		end
 	elseif state.wasEquipped then
+		-- print("Unequipping...")
 		unequipItems()
 	end
 end
@@ -48,21 +50,34 @@ registerForEvent("onInit", function ()
 	state.items = Util.getItems()
 
 	ObserveAfter("EquipmentSystemPlayerData", "OnRestored", function ()
+		-- print("Loaded into the game.")
 		state:update()
 	end)
 
 	ObserveAfter("PlayerPuppet", "OnCombatStateChanged", function ()
+		-- print("Combat state changed.")
+
 		state.wasInCombat = Util.isInCombat()
 		onStateChanged(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
+		
+		-- print(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
 	end)
 
-	ObserveAfter("TargetHitIndicatorGameController", "OnWeaponChanged", function ()
-		state.wasWeaponDrawn = Util.isWeaponDrawn()
-		onStateChanged(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
-	end)
+	-- ObserveAfter("TargetHitIndicatorGameController", "OnWeaponChanged", function ()
+	-- 	print("Weapon changed.")
+
+	-- 	state.wasWeaponDrawn = Util.isWeaponDrawn()
+	-- 	onStateChanged(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
+			
+	-- 	print(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
+	-- end)
 
 	ObserveAfter("PlayerPuppet", "OnZoneFactChanged", function ()
+		-- print("Zone fact changed.")
+
 		state.wasInHostileZone = Util.isInHostileZone()
 		onStateChanged(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
+			
+		-- print(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
 	end)
 end)
