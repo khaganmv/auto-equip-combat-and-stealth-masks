@@ -1,0 +1,14 @@
+{
+    "Lua.diagnostics.globals": [
+        "Game",
+        "TDBID",
+        "ItemID",
+        "registerForEvent",
+        "Observe",
+        "json",
+        "ObserveAfter",
+        "ObserveBefore",
+        "registerInput",
+        "EnumInt"
+    ]
+}
