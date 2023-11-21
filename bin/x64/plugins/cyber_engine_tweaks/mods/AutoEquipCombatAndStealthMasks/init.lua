@@ -34,12 +34,14 @@ end
 local function onStateChanged(active)
 	if active then
 		if not state.wasEquipped and not Util.isInVehicle() then
-			-- print("Equipping...")
 			equipItems()
+
+			-- print("Equipping.")
 		end
 	elseif state.wasEquipped then
-		-- print("Unequipping...")
 		unequipItems()
+
+		-- print("Unequipping.")
 	end
 end
 
@@ -50,34 +52,29 @@ registerForEvent("onInit", function ()
 	state.items = Util.getItems()
 
 	ObserveAfter("EquipmentSystemPlayerData", "OnRestored", function ()
-		-- print("Loaded into the game.")
 		state:update()
+
+		-- print("Loaded save.")
 	end)
 
 	ObserveAfter("PlayerPuppet", "OnCombatStateChanged", function ()
-		-- print("Combat state changed.")
-
 		state.wasInCombat = Util.isInCombat()
 		onStateChanged(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
 		
-		-- print(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
+		-- print("Combat state changed: " .. tostring(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone))
 	end)
 
-	-- ObserveAfter("TargetHitIndicatorGameController", "OnWeaponChanged", function ()
-	-- 	print("Weapon changed.")
-
-	-- 	state.wasWeaponDrawn = Util.isWeaponDrawn()
-	-- 	onStateChanged(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
-			
-	-- 	print(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
-	-- end)
+	ObserveAfter("scannerGameController", "OnWeaponSwap", function ()		
+		state.wasWeaponDrawn = Util.isWeaponDrawn()
+		onStateChanged(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
+		
+		-- print("Weapon changed: " .. tostring(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone))
+	end)
 
 	ObserveAfter("PlayerPuppet", "OnZoneFactChanged", function ()
-		-- print("Zone fact changed.")
-
 		state.wasInHostileZone = Util.isInHostileZone()
 		onStateChanged(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
-			
-		-- print(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone)
+		
+		-- print("Zone fact changed: " .. tostring(state.wasInCombat or state.wasWeaponDrawn or state.wasInHostileZone))
 	end)
 end)
